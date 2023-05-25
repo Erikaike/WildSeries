@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wild Series
+{% endblock %}
+
+{% block body %}
+	<h1>Programs of the
+		{{ category.name }}
+		category</h1>
+
+	<ul>
+		{% if programs is defined %}
+			{% for program in programs %}
+				<li>{{ program.id }}
+					-
+					{{ program.title }}
+					-
+					{{ program.synopsis }}
+					<a href="{{ path("program_show", { id: program.id }) }}">Voir la fiche</a>
+				</li>
+			{% endfor %}
+		{% else %}
+			<p>No show found</p>
+		{% endif %}
+	</ul>
+{% endblock %}
