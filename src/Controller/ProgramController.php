@@ -2,13 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\Season;
+use App\Entity\Episode;
+use App\Entity\Program;
+use App\Entity\Category;
+use App\Form\ProgramType;
+use App\Repository\SeasonRepository;
 use App\Repository\ProgramRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Entity\Program;
-use App\Entity\Season;
-use App\Repository\SeasonRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/program', name: 'program_')]
 class ProgramController extends AbstractController
@@ -24,14 +29,14 @@ class ProgramController extends AbstractController
         ]);
     }
     #[Route('/show/{id<^[0-9]+$>}/', name: 'show')]
-    public function show(int $id, ProgramRepository $programRepository): Response
+    public function show(Program $program): Response
     {
-        $program = $programRepository->findOneBy(['id' => $id]);
+        // $program = $programRepository->findOneBy(['id' => $id]);
 
 
         if (!$program) {
             throw $this->createNotFoundException(
-                'No program with id : ' . $id . ' found in program\'s table.'
+                'No program found in program\'s table.'
             );
         }
 
@@ -40,7 +45,26 @@ class ProgramController extends AbstractController
         ]);
     }
 
+    #[Route('/new', name: 'new')]
+    public function new(Request $request): Response
+    {
+        //Creer l'objet program
+        $program = new program;
+        //Creer le formulaire lié à $program
+        $form = $this->createForm(ProgramType::class, $program);
+        //Chope les données entrées dans le formulaire
+        $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+        }
+
+        return $this->render('program/new.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
     #[Route('/{programId}/seasons/{seasonId}', name: "season_show")]
+    #[\Doctrine\ORM\Mapping\Entity('program', options: ['mapping' => ['programId' => 'id']])]
+    #[\Doctrine\ORM\Mapping\Entity('season', options: ['mapping' => ['seasonId' => 'id']])]
     public function showSeason(int $programId, int $seasonId, ProgramRepository $programRepository, SeasonRepository $seasonRepository): Response
     {
         $program = $programRepository->findOneBy(['id' => $programId]);
@@ -50,6 +74,16 @@ class ProgramController extends AbstractController
         return $this->render('program/season_show.html.twig', [
             'program' => $program,
             'season' => $season,
+        ]);
+    }
+
+    #[Route('/{program}/season/{season}/episode/{episode}', name: "episode_show")]
+    public function showEpisode(Program $program, Season $season, Episode $episode)
+    {
+        return $this->render('program/episode_show.html.twig', [
+            'program' => $program,
+            'season' => $season,
+            'episode' => $episode,
         ]);
     }
 }
