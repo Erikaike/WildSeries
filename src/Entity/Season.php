@@ -29,7 +29,7 @@ class Season
     #[ORM\JoinColumn(nullable: false)]
     private ?program $program_id = null;
 
-    #[ORM\OneToMany(mappedBy: 'season_id', targetEntity: Episode::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'season_id', targetEntity: Episode::class)]
     private Collection $episodes;
 
     public function __construct()
