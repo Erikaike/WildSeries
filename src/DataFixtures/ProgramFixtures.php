@@ -29,7 +29,6 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
                 ->setSynopsis($value['synopsis'])
                 ->setCountry($value['coutry'])
                 ->setYear($value['year']);
-            $this->addReference('program_' . $key += 1, $program);
 
             $manager->persist($program);
         }

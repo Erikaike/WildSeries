@@ -14,10 +14,11 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create();
         //Boucle Program
-        for ($i = 1; $i < count(programFixtures::PROGRAM) + 1; $i++) {
+        for ($i = 1; $i < count(ProgramFixtures::PROGRAM) + 1; $i++) {
             //Boucle Season
             for ($j = 1; $j < 6; $j++) {
                 //Boucle Episode
+
                 for ($k = 1; $k < 11; $k++) {
                     $episode = new Episode();
                     $episode->setTitle($faker->word())

@@ -49,7 +49,7 @@ class ProgramController extends AbstractController
     public function new(Request $request): Response
     {
         //Creer l'objet program
-        $program = new program;
+        $program = new Program;
         //Creer le formulaire lié à $program
         $form = $this->createForm(ProgramType::class, $program);
         //Chope les données entrées dans le formulaire
@@ -63,8 +63,8 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/{programId}/seasons/{seasonId}', name: "season_show")]
-    #[\Doctrine\ORM\Mapping\Entity('program', options: ['mapping' => ['programId' => 'id']])]
-    #[\Doctrine\ORM\Mapping\Entity('season', options: ['mapping' => ['seasonId' => 'id']])]
+    #[\Doctrine\ORM\Mapping\Entity('Program', options: ['mapping' => ['programId' => 'id']])]
+    #[\Doctrine\ORM\Mapping\Entity('Season', options: ['mapping' => ['seasonId' => 'id']])]
     public function showSeason(int $programId, int $seasonId, ProgramRepository $programRepository, SeasonRepository $seasonRepository): Response
     {
         $program = $programRepository->findOneBy(['id' => $programId]);
