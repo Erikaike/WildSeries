@@ -55,6 +55,7 @@ class ProgramController extends AbstractController
         //Chope les données entrées dans le formulaire
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
+            $this->addFlash('success', 'la série a bien été ajoutée');
         }
 
         return $this->render('program/new.html.twig', [
@@ -63,8 +64,8 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/{programId}/seasons/{seasonId}', name: "season_show")]
-    #[\Doctrine\ORM\Mapping\Entity('Program', options: ['mapping' => ['programId' => 'id']])]
-    #[\Doctrine\ORM\Mapping\Entity('Season', options: ['mapping' => ['seasonId' => 'id']])]
+    #[Entity('Program', options: ['mapping' => ['programId' => 'id']])]
+    #[Entity('Season', options: ['mapping' => ['seasonId' => 'id']])]
     public function showSeason(int $programId, int $seasonId, ProgramRepository $programRepository, SeasonRepository $seasonRepository): Response
     {
         $program = $programRepository->findOneBy(['id' => $programId]);

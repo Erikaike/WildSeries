@@ -31,6 +31,7 @@ class SeasonController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $seasonRepository->save($season, true);
 
+            $this->addFlash('succes', 'la saison a bien été ajoutée');
             return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -48,19 +49,19 @@ class SeasonController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_season_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Season $season, SeasonRepository $seasonRepository): Response
+    #[Route('/edit/{id}', name: 'app_season_edit', methods: ['GET', 'POST'])]
+    public function edit(Season $season, SeasonRepository $seasonRepository, Request $request): Response
     {
         $form = $this->createForm(SeasonType::class, $season);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $seasonRepository->save($season, true);
-
+            $this->addFlash('success', 'la saison a bien été modifée');
             return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('season/edit.html.twig', [
+        return $this->render('season/edit.html.twig', [
             'season' => $season,
             'form' => $form,
         ]);
@@ -73,6 +74,7 @@ class SeasonController extends AbstractController
             $seasonRepository->remove($season, true);
         }
 
+        $this->addFlash('danger', 'la saison a bien été supprimée');
         return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
     }
 }

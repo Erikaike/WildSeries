@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ProgramRepository::class)]
-#[UniqueEntity('title')]
+#[UniqueEntity('Title')]
 class Program
 {
     #[ORM\Id]
@@ -45,6 +45,7 @@ class Program
 
     #[ORM\OneToMany(mappedBy: 'program_id', targetEntity: Season::class, orphanRemoval: true)]
     private Collection $seasons;
+
 
     public function __construct()
     {
