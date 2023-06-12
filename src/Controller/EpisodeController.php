@@ -34,7 +34,7 @@ class EpisodeController extends AbstractController
             return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('episode/new.html.twig', [
+        return $this->render('episode/new.html.twig', [
             'episode' => $episode,
             'form' => $form,
         ]);
@@ -60,7 +60,7 @@ class EpisodeController extends AbstractController
             return $this->redirectToRoute('app_episode_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('episode/edit.html.twig', [
+        return $this->render('episode/edit.html.twig', [
             'episode' => $episode,
             'form' => $form,
         ]);
@@ -69,7 +69,7 @@ class EpisodeController extends AbstractController
     #[Route('/{id}', name: 'app_episode_delete', methods: ['POST'])]
     public function delete(Request $request, Episode $episode, EpisodeRepository $episodeRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$episode->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $episode->getId(), $request->request->get('_token'))) {
             $episodeRepository->remove($episode, true);
         }
 

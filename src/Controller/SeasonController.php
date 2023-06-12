@@ -60,7 +60,7 @@ class SeasonController extends AbstractController
             return $this->redirectToRoute('app_season_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('season/edit.html.twig', [
+        return $this->render('season/edit.html.twig', [
             'season' => $season,
             'form' => $form,
         ]);

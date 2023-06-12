@@ -24,7 +24,7 @@ class Program
     private ?string $Synopsis = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $Poster = null;
+    private ?string $poster = null;
 
     #[ORM\ManyToOne(inversedBy: 'programs')]
     #[ORM\JoinColumn(nullable: false)]
@@ -36,7 +36,7 @@ class Program
     #[ORM\Column]
     private ?int $year = null;
 
-    #[ORM\OneToMany(mappedBy: 'program_id', targetEntity: Season::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'program', targetEntity: Season::class, orphanRemoval: true)]
     private Collection $seasons;
 
     public function __construct()
@@ -76,12 +76,12 @@ class Program
 
     public function getPoster(): ?string
     {
-        return $this->Poster;
+        return $this->poster;
     }
 
-    public function setPoster(?string $Poster): self
+    public function setPoster(?string $poster): self
     {
-        $this->Poster = $Poster;
+        $this->poster = $poster;
 
         return $this;
     }
@@ -134,7 +134,7 @@ class Program
     {
         if (!$this->seasons->contains($season)) {
             $this->seasons->add($season);
-            $season->setProgramId($this);
+            $season->setProgram($this);
         }
 
         return $this;
@@ -144,8 +144,8 @@ class Program
     {
         if ($this->seasons->removeElement($season)) {
             // set the owning side to null (unless already changed)
-            if ($season->getProgramId() === $this) {
-                $season->setProgramId(null);
+            if ($season->getProgram() === $this) {
+                $season->setProgram(null);
             }
         }
 
