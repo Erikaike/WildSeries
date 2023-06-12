@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wild Serie - Fiche Acteur
+{% endblock %}
+
+{% block body %}
+	{{ actor.name }}
+
+	{% for program in actor.programs %}
+		{{ program.title }}
+	{% endfor %}
+
+
+{% endblock %}
