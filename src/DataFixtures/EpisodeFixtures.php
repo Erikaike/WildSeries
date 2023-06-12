@@ -24,7 +24,7 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
                     $episode->setTitle($faker->word())
                         ->setNumber($k)
                         ->setSynopsis($faker->paragraphs(1, true))
-                        ->setSeasonId($this->getReference('season' . $j . '_serie' . $i));
+                        ->setSeason($this->getReference('season' . $j . '_serie' . $i));
 
                     $manager->persist($episode);
                 }
