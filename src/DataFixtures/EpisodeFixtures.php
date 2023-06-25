@@ -2,14 +2,23 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Episode;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use App\Entity\Episode;
+use App\DataFixtures\SeasonFixtures;
+use App\DataFixtures\ProgramFixtures;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class EpisodeFixtures extends Fixture implements DependentFixtureInterface
 {
+    private SluggerInterface $slug;
+
+    public function __construct(SluggerInterface $slug)
+    {
+        $this->slug = $slug;
+    }
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
@@ -24,7 +33,9 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
                     $episode->setTitle($faker->word())
                         ->setNumber($k)
                         ->setSynopsis($faker->paragraphs(1, true))
-                        ->setSeason($this->getReference('season' . $j . '_serie' . $i));
+                        ->setSeason($this->getReference('season' . $j . '_serie' . $i))
+                        ->setDuration(rand(0, 60))
+                        ->setSlug($this->slug->slug($episode->getTitle()));
 
                     $manager->persist($episode);
                 }

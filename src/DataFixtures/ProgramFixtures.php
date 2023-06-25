@@ -7,9 +7,12 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
+    private SluggerInterface $slug;
+
     public const PROGRAM = [
         ['title' => 'The 100',               'category' => 'Suspens',     'synopsis' => 'a bunch of youngsters trying to survive on an almost-deserted planet Earth',                         'coutry' => 'USA', 'year' => 2015],
         ['title' => '24',                    'category' => 'Action',      'synopsis' => 'Jack Bauer does a lot of stuff and saves the world',                                                 'coutry' => 'USA', 'year' => 2001],
@@ -18,6 +21,11 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         ['title' => 'Banana Fish',           'category' => 'Manga',       'synopsis' => 'A mix of BL and gang stories',                                                                       'coutry' => 'Japan', 'year' => 2014],
         ['title' => 'Friends',               'category' => 'Comedie',     'synopsis' => 'A group of 6 new-yorkers having decent jobs but living in crazy appartments',                        'coutry' => 'USA', 'year' => 1994],
     ];
+
+    public function __construct(SluggerInterface $slug)
+    {
+        $this->slug = $slug;
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -28,7 +36,8 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
                 ->setCategory($this->getReference('category_' . $value['category']))
                 ->setSynopsis($value['synopsis'])
                 ->setCountry($value['coutry'])
-                ->setYear($value['year']);
+                ->setYear($value['year'])
+                ->setSlug($this->slug->slug($program->getTitle()));
 
             $this->addReference('program_' . $key, $program);
             $manager->persist($program);
