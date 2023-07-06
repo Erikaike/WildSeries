@@ -5,12 +5,12 @@ namespace App\Controller;
 use App\Entity\Season;
 use App\Entity\Episode;
 use App\Entity\Program;
-use App\Entity\Category;
 use App\Form\ProgramType;
 use App\Service\ProgramDuration;
-use App\Repository\SeasonRepository;
+use Symfony\Component\Mime\Email;
 use App\Repository\ProgramRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -30,9 +30,10 @@ class ProgramController extends AbstractController
             'programs' => $programs,
         ]);
     }
+
     #[Route('/show/{slug}/', name: 'show', requirements: ['page' => '\d+'])]
-    #[Entity('Program', options: ['mapping' => ['slug' => 'slug']])]
-    public function show(Program $program, ProgramDuration $programDuration): Response
+    #[Entity('Program')]
+    public function show($slug, Program $program, ProgramDuration $programDuration): Response
     {
 
         if (!$program) {
@@ -44,22 +45,39 @@ class ProgramController extends AbstractController
         return $this->render('program/show.html.twig', [
             'program' => $program,
             'programDuration' => $programDuration->calculate($program),
+            'slug' => $slug,
         ]);
     }
 
     #[Route('/new', name: 'new')]
-    public function new(Request $request, SluggerInterface $slug): Response
+    public function new(Request $request, ProgramRepository $programRepository, SluggerInterface $slugger, MailerInterface $mailer): Response
     {
         //Creer l'objet program
         $program = new Program;
         //Creer le formulaire lié à $program
         $form = $this->createForm(ProgramType::class, $program);
-        //Sluggifie le titre
-        $program->setSlug($this->slug->slug($program->getTitle()));
         //Chope les données entrées dans le formulaire
         $form->handleRequest($request);
+        
         if ($form->isSubmitted()) {
+             //Sluggifie le titre
+             $program->setSlug($slugger->slug($program->getTitle()));
+        
+            $programRepository->save($program, true);
             $this->addFlash('success', 'la série a bien été ajoutée');
+
+            //Envoie de mail à l'ajout d'une nvelle serie
+            $email = (new Email())
+                ->from($this->getParameter(('mailer_from')))
+                ->to('erika.ike@outlook.fr')
+                ->subject('salut meuf')
+                ->html($this->renderView('Program/newProgramEmail.html.twig', ['program' => $program]));
+            
+            
+            $mailer->send($email);
+                
+
+            return $this->redirectToRoute('program_index');
         }
 
         return $this->render('program/new.html.twig', [
@@ -68,16 +86,19 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/{slug}/seasons/{season}', name: "season_show")]
-    #[Entity('Program', options: ['mapping' => ['slug' => 'slug']])]
-    public function showSeason(int $programId, int $seasonId, ProgramRepository $programRepository, SeasonRepository $seasonRepository): Response
+    #[Entity('Program')]
+    public function showSeason($slug, Program $program, Season $season): Response
     {
-        $program = $programRepository->findOneBy(['id' => $programId]);
-
-        $season = $seasonRepository->findOneBy(['id' => $seasonId]);
+        if (!$season) {
+            throw $this->createNotFoundException(
+                'No episode with id : ' . $season->getId() . ' found in episode\'s table.'
+            );
+        }
 
         return $this->render('program/season_show.html.twig', [
             'program' => $program,
             'season' => $season,
+            'slug' => $slug,
         ]);
     }
 
@@ -86,6 +107,13 @@ class ProgramController extends AbstractController
     #[Entity('Episode', options: ['mapping' => ['episodeSlug' => 'slug']])]
     public function showEpisode(Program $program, Season $season, Episode $episode)
     {
+        if (!$episode) {
+            throw $this->createNotFoundException(
+                'No episode with id : ' . $episode->getId() . ' found in episode\'s table.'
+            );
+        }
+
+
         return $this->render('program/episode_show.html.twig', [
             'program' => $program,
             'season' => $season,

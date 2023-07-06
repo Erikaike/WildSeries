@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Vich\UploaderBundle\Form\Type\VichFileType;
 
 class ProgramType extends AbstractType
 {
@@ -20,7 +21,6 @@ class ProgramType extends AbstractType
         $builder
             ->add('Title', TextType::class)
             ->add('Synopsis', TextareaType::class)
-            ->add('Poster', TextType::class)
             ->add('country', TextType::class)
             ->add('year', IntegerType::class)
             ->add('category', null, ['choice_label' => 'name'])
@@ -29,6 +29,12 @@ class ProgramType extends AbstractType
                 'choice_label' => 'name',
                 'multiple'     => true,
                 'expanded'     => true,
+                'by_reference' => false,
+            ])
+            ->add('posterFile', VichFileType::class, [
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => true,
             ]);
     }
 

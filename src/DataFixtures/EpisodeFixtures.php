@@ -13,9 +13,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class EpisodeFixtures extends Fixture implements DependentFixtureInterface
 {
-    private SluggerInterface $slug;
-
-    public function __construct(SluggerInterface $slug)
+    
+    public function __construct(private SluggerInterface $slug)
     {
         $this->slug = $slug;
     }
@@ -34,7 +33,7 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
                         ->setNumber($k)
                         ->setSynopsis($faker->paragraphs(1, true))
                         ->setSeason($this->getReference('season' . $j . '_serie' . $i))
-                        ->setDuration(rand(0, 60))
+                        ->setDuration($faker->numberBetween(0, 60))
                         ->setSlug($this->slug->slug($episode->getTitle()));
 
                     $manager->persist($episode);

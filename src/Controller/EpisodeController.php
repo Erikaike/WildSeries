@@ -27,11 +27,12 @@ class EpisodeController extends AbstractController
     {
         $episode = new Episode();
         $form = $this->createForm(EpisodeType::class, $episode);
-        $slug = $slugger->slug($episode->getTitle());
-        $episode->setSlug($slug);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $episode->setSlug($slugger->slug($episode->getTitle()));
+            
             $episodeRepository->save($episode, true);
 
             $this->addFlash('succes', 'l\'épisode a bien été ajouté');
@@ -53,14 +54,13 @@ class EpisodeController extends AbstractController
     }
 
     #[Route('/{slug}/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Episode $episode, EpisodeRepository $episodeRepository, SluggerInterface $slugger): Response
+    public function edit($slug, Request $request, Episode $episode, EpisodeRepository $episodeRepository, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(EpisodeType::class, $episode);
-        $slug = $slugger->slug($episode->getTitle());
-        $episode->setSlug($slug);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $episode->setSlug($slugger->slug($episode->getTitle()));
             $episodeRepository->save($episode, true);
 
             $this->addFlash('success', 'l\'épisode a bien été modifié');
@@ -70,6 +70,7 @@ class EpisodeController extends AbstractController
         return $this->render('episode/edit.html.twig', [
             'episode' => $episode,
             'form' => $form,
+            'slug' => $slug
         ]);
     }
 

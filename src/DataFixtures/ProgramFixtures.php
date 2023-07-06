@@ -11,7 +11,6 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
-    private SluggerInterface $slug;
 
     public const PROGRAM = [
         ['title' => 'The 100',               'category' => 'Suspens',     'synopsis' => 'a bunch of youngsters trying to survive on an almost-deserted planet Earth',                         'coutry' => 'USA', 'year' => 2015],
@@ -22,7 +21,7 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         ['title' => 'Friends',               'category' => 'Comedie',     'synopsis' => 'A group of 6 new-yorkers having decent jobs but living in crazy appartments',                        'coutry' => 'USA', 'year' => 1994],
     ];
 
-    public function __construct(SluggerInterface $slug)
+    public function __construct(private SluggerInterface $slug)
     {
         $this->slug = $slug;
     }

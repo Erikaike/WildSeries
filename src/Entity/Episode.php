@@ -27,7 +27,7 @@ class Episode
     #[ORM\JoinColumn(nullable: false)]
     private ?Season $season = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $duration = null;
 
     #[ORM\Column]

@@ -2,18 +2,24 @@
 
 namespace App\Entity;
 
+use DateTime;
+use App\Entity\Actor;
 use App\Entity\Season;
+use DateTimeInterface;
 use App\Entity\relationships;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProgramRepository;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ProgramRepository::class)]
 #[UniqueEntity('Title')]
+#[Vich\Uploadable]
 class Program
 {
     #[ORM\Id]
@@ -33,6 +39,13 @@ class Program
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $poster = null;
 
+    #[Vich\UploadableField(mapping: 'poster_file', fileNameProperty: 'poster')]
+    #[Assert\File(
+        maxSize: '1M',
+        mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    )]
+    private ?File $posterFile = null;
+
     #[ORM\ManyToOne(inversedBy: 'programs')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
@@ -51,6 +64,9 @@ class Program
 
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?DateTimeInterface $updatedAt = null;
 
 
     public function __construct()
@@ -205,4 +221,39 @@ class Program
 
         return $this;
     }
+
+	/**
+	 * @return 
+	 */
+	public function getPosterFile(): ?File {
+		return $this->posterFile;
+	}
+	
+	/**
+	 * @param  $posterFile 
+	 * @return self
+	 */
+	public function setPosterFile(File $image = null): Program 
+    {
+		$this->posterFile = $image;
+        if ($image) {
+            $this->updatedAt = new DateTime('now');
+        }
+		return $this;
+	}
+
+	/**
+	 * @return 
+	 */
+	public function getUpdatedAt(): ?DateTimeInterface {
+		return $this->updatedAt;
+	}
+	
+	/**
+	 * @param  $updatedAt 
+	 * @return self
+	 */
+	public function setUpdatedAt(?DateTimeInterface $updatedAt): void {
+		$this->updatedAt = $updatedAt;
+	}
 }
