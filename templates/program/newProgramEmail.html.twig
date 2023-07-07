@@ -5,11 +5,8 @@
 
 {% block body %}
 	<body>
-    <h1>New Episode {{ episode.title }} created</h1>
-    <p>Hello, the new Episode of the new program {{ program.title }} has been created on Wild Series</p>
-    <p>you'll find it   <a href="{{ path("app_episode_show", { id: episode.id }) }}">here</a></p>
-    
-
-    
+    <h1>Salut, il  y a un New program {{ program.title }} created</h1>
+    <p>Hello, the new program {{ program.title }} has been created on Wild Series</p>
+    <p>Synopsis : {{program.synopsis }}</p>
 </body>
 {% endblock %}

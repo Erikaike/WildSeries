@@ -53,7 +53,7 @@ class ProgramController extends AbstractController
     public function new(Request $request, ProgramRepository $programRepository, SluggerInterface $slugger, MailerInterface $mailer): Response
     {
         //Creer l'objet program
-        $program = new Program;
+        $program = new Program();
         //Creer le formulaire lié à $program
         $form = $this->createForm(ProgramType::class, $program);
         //Chope les données entrées dans le formulaire
@@ -71,7 +71,7 @@ class ProgramController extends AbstractController
                 ->from($this->getParameter(('mailer_from')))
                 ->to('erika.ike@outlook.fr')
                 ->subject('salut meuf')
-                ->html($this->renderView('Program/newProgramEmail.html.twig', ['program' => $program]));
+                ->html($this->renderView('program/newProgramEmail.html.twig', ['program' => $program]));
             
             
             $mailer->send($email);
